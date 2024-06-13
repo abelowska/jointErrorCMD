@@ -2,6 +2,7 @@ venv
 data
 plgrid_results
 cmd_results
+beh_results
 
 .ipynb_checkpoints
 .pre-commit-config.yaml
