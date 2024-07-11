@@ -3,6 +3,8 @@ data
 plgrid_results
 cmd_results
 beh_results
+models/TBB_models/old
+notebooks/jupyter_logs.txt
 
 .ipynb_checkpoints
 .pre-commit-config.yaml
