@@ -3,9 +3,11 @@ data
 plgrid_results
 cmd_results
 beh_results
+results/
 models/TBB_models/old
 notebooks/jupyter_logs.txt
 
+.DS_Store
 .ipynb_checkpoints
 .pre-commit-config.yaml
 .vscode/settings.json
