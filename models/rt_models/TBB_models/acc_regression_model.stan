@@ -7,7 +7,7 @@ functions{
         vector cond,
         vector ne, 
         real ne_cond,
-        vector acc,
+        real acc,
         real acc_cond,
         vector ne_acc, 
         real ne_acc_cond,        
@@ -21,7 +21,7 @@ functions{
         vector[n_trials] partial_sum_level_likelihood;
         
         for (t in 1:n_trials) {
-            partial_sum_level_likelihood[t] = bernoulli_logit_lpmf(y_slice[t] | mu[participant[global_index]] + cond[participant[global_index]]*condition[global_index] + ne[participant[global_index]]*pre_ne[global_index] + ne_cond*pre_ne[global_index]*condition[global_index] + acc[participant[global_index]]*pre_acc[global_index] + acc_cond*pre_acc[global_index]*condition[global_index] + ne_acc[participant[global_index]]*pre_ne[global_index]*pre_acc[global_index] + ne_acc_cond*pre_ne[global_index]*pre_acc[global_index]*condition[global_index]);
+            partial_sum_level_likelihood[t] = bernoulli_logit_lpmf(y_slice[t] | mu[participant[global_index]] + cond[participant[global_index]]*condition[global_index] + ne[participant[global_index]]*pre_ne[global_index] + ne_cond*pre_ne[global_index]*condition[global_index] + acc*pre_acc[global_index] + acc_cond*pre_acc[global_index]*condition[global_index] + ne_acc[participant[global_index]]*pre_ne[global_index]*pre_acc[global_index] + ne_acc_cond*pre_ne[global_index]*pre_acc[global_index]*condition[global_index]);
 
             global_index = global_index + 1;
         }
@@ -71,11 +71,10 @@ model {
     // ##########
     // Between-participant variability priors
     // ##########
-    mu_sd ~ gamma(.2,1);
-    cond_sd ~ gamma(.2,1);
-    ne_sd ~ gamma(.2,1);
-    acc_sd ~ gamma(.2,1);
-    ne_acc_sd ~ gamma(.2,1);
+    mu_sd ~ gamma(1,1);
+    cond_sd ~ gamma(1,1);
+    ne_sd ~ gamma(1,1);
+    ne_acc_sd ~ gamma(1,1);
 
     // ##########
     // Hierarchical parameter priors
@@ -83,12 +82,12 @@ model {
     mu ~ normal(0, 1.5);
     cond ~ normal(0, .2);
     ne ~ normal(0, .2); 
-    acc ~ normal(0, .2); 
     ne_acc ~ normal(0, .2);
 
     // ##########
     // Non Hierarchical parameter priors
     // ##########
+    acc ~ normal(0, .2); 
     ne_cond ~ normal(0,0.2);  
     acc_cond ~ normal(0, 0.2);
     ne_acc_cond ~ normal(0, 0.2);
@@ -102,16 +101,15 @@ model {
         participants_mu[p] ~ normal(mu, mu_sd);
         participants_cond[p] ~ normal(cond, cond_sd);
         participants_ne[p] ~ normal(ne, ne_sd);
-        participants_acc[p] ~ normal(acc, acc_sd);
         participants_ne_acc[p] ~ normal(ne_acc, ne_acc_sd);
       
     }
     int grainsize = 100;     
-    target += reduce_sum(partial_bernoulli_logit_lpmf, y_acc, grainsize, participants_mu, participants_cond, participants_ne, ne_cond, participants_acc, acc_cond, participants_ne_acc, ne_acc_cond, condition, pre_ne, pre_acc, participant);        
+    target += reduce_sum(partial_bernoulli_logit_lpmf, y_acc, grainsize, participants_mu, participants_cond, participants_ne, ne_cond, acc, acc_cond, participants_ne_acc, ne_acc_cond, condition, pre_ne, pre_acc, participant);        
 }
 
 generated quantities { 
-    vector[N] log_lik; 
+    // vector[N] log_lik; 
     real ern;
     real crn;
 
@@ -128,31 +126,30 @@ generated quantities {
         participants_crn[p] = participants_ne[p] + participants_ne_acc[p];
     }
 
-    // results in a proportion space
-    real mu_prop = inv_logit(mu);
-    real cond_prop = inv_logit(mu) - inv_logit(mu - cond);
-    real ne_prop = inv_logit(mu) - inv_logit(mu - ne);
-    real pre_acc_prop = inv_logit(mu) - inv_logit(mu - acc);
-    real ne_pre_acc_prop = inv_logit(mu) - inv_logit(mu - ne_acc);
-    real ne_cond_prop = inv_logit(mu) - inv_logit(mu - ne_cond);
-    real acc_cond_prop = inv_logit(mu) - inv_logit(mu - acc_cond);
-    real ne_acc_cond_prop = inv_logit(mu) - inv_logit(mu - ne_acc_cond);
-    real ern_prop = inv_logit(mu) - inv_logit(mu - ern);
-    real crn_prop = inv_logit(mu) - inv_logit(mu - crn);
+    // // results in a proportion space
+    // real mu_prop = inv_logit(mu);
+    // real cond_prop = inv_logit(mu) - inv_logit(mu - cond);
+    // real ne_prop = inv_logit(mu) - inv_logit(mu - ne);
+    // real pre_acc_prop = inv_logit(mu) - inv_logit(mu - acc);
+    // real ne_pre_acc_prop = inv_logit(mu) - inv_logit(mu - ne_acc);
+    // real ne_cond_prop = inv_logit(mu) - inv_logit(mu - ne_cond);
+    // real acc_cond_prop = inv_logit(mu) - inv_logit(mu - acc_cond);
+    // real ne_acc_cond_prop = inv_logit(mu) - inv_logit(mu - ne_acc_cond);
+    // real ern_prop = inv_logit(mu) - inv_logit(mu - ern);
+    // real crn_prop = inv_logit(mu) - inv_logit(mu - crn);
 
 
-    vector[n_participants] participants_mu_prop = inv_logit(participants_mu);
-    vector[n_participants] participants_cond_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_cond);
-    vector[n_participants] participants_ne_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_ne);
-    vector[n_participants] participants_acc_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_acc);
-    vector[n_participants] participants_ne_acc_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_ne_acc) ;
-    vector[n_participants] participants_ern_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_ern);
-    vector[n_participants] participants_crn_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_crn); 
+    // vector[n_participants] participants_mu_prop = inv_logit(participants_mu);
+    // vector[n_participants] participants_cond_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_cond);
+    // vector[n_participants] participants_ne_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_ne);
+    // vector[n_participants] participants_ne_acc_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_ne_acc) ;
+    // vector[n_participants] participants_ern_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_ern);
+    // vector[n_participants] participants_crn_prop = inv_logit(participants_mu) - inv_logit(participants_mu - participants_crn); 
 
 
-    // likelihood
-    for (i in 1:N) {
+    // // likelihood
+    // for (i in 1:N) {
 
-         log_lik[i] = bernoulli_logit_lpmf(y_acc[i] | participants_mu[participant[i]] + participants_cond[participant[i]]*condition[i] + participants_ne[participant[i]]*pre_ne[i] + ne_cond*pre_ne[i]*condition[i] + participants_acc[participant[i]]*pre_acc[i] + acc_cond*pre_acc[i]*condition[i] + participants_ne_acc[participant[i]]*pre_ne[i]*pre_acc[i] + ne_acc_cond*pre_ne[i]*pre_acc[i]*condition[i]);
-    }
+    //      log_lik[i] = bernoulli_logit_lpmf(y_acc[i] | participants_mu[participant[i]] + participants_cond[participant[i]]*condition[i] + participants_ne[participant[i]]*pre_ne[i] + ne_cond*pre_ne[i]*condition[i] + acc*pre_acc[i] + acc_cond*pre_acc[i]*condition[i] + participants_ne_acc[participant[i]]*pre_ne[i]*pre_acc[i] + ne_acc_cond*pre_ne[i]*pre_acc[i]*condition[i]);
+    // }
 }

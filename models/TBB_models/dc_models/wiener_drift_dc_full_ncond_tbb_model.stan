@@ -11,7 +11,7 @@ functions {
     */
     real diffusion_lpdf(real Y, real dc, real ndt, real bias, real drift) {
         if (ndt >= abs(Y)) {
-            return wiener_lpdf(ndt + 0.001 | 1/dc, ndt, bias, drift/dc);
+            return wiener_lpdf(ndt | 1/dc, ndt, bias, drift/dc);
         }
         else {
             if (Y >= 0) {
@@ -123,11 +123,11 @@ model {
     // ##########
     ter_sd ~ gamma(.3,1);
     varsigma_sd ~ gamma(1,1);
-    varsigma_ne_sd ~ gamma(.3,1);
-    varsigma_ne_pre_acc_sd ~ gamma(.3,1);
+    varsigma_ne_sd ~ gamma(1,1);
+    varsigma_ne_pre_acc_sd ~ gamma(1,1);
     delta_sd ~ gamma(1,1);
-    delta_ne_sd ~ gamma(.3,1);
-    delta_ne_pre_acc_sd ~ gamma(.3,1);
+    delta_ne_sd ~ gamma(1,1);
+    delta_ne_pre_acc_sd ~ gamma(1,1);
 
     // ##########
     // Hierarchical parameters priors

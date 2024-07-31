@@ -11,7 +11,7 @@ functions {
     */
     real diffusion_lpdf(real Y, real boundary, real ndt, real bias, real drift) {
         if (ndt >= abs(Y)) {
-            return wiener_lpdf(ndt + 0.001 | boundary, ndt, bias, drift);
+            return wiener_lpdf(ndt | boundary, ndt, bias, drift);
         }
         else {
             if (Y >= 0) {
@@ -85,7 +85,7 @@ data {
 }
 
 parameters {
-    vector<lower=0, upper=0.3>[n_participants] participants_ter;
+    vector<lower=0, upper=0.4>[n_participants] participants_ter;
     vector<lower=0, upper=3>[n_participants] participants_alpha;
     vector[n_participants] participants_alpha_ne;
     vector[n_participants] participants_alpha_ne_pre_acc;
@@ -94,7 +94,7 @@ parameters {
     vector[n_participants] participants_delta_ne;
     vector[n_participants] participants_delta_ne_pre_acc;
 
-    real<lower=0> ter;
+    real<lower=0, upper=.4> ter;
     real<lower=0, upper=3> alpha;
     real alpha_ne;
     real alpha_ne_pre_acc;
@@ -123,16 +123,16 @@ model {
     // ##########
     ter_sd ~ gamma(.3,1);
     alpha_sd ~ gamma(1,1);
-    alpha_ne_sd ~ gamma(.3,1);
-    alpha_ne_pre_acc_sd ~ gamma(.3,1);
+    alpha_ne_sd ~ gamma(1,1);
+    alpha_ne_pre_acc_sd ~ gamma(1,1);
     delta_sd ~ gamma(1,1);
-    delta_ne_sd ~ gamma(.3,1);
-    delta_ne_pre_acc_sd ~ gamma(.3,1);
+    delta_ne_sd ~ gamma(1,1);
+    delta_ne_pre_acc_sd ~ gamma(1,1);
 
     // ##########
     // Hierarchical parameters priors
     // ##########
-    ter ~ normal(.1, .2) T[0, .3];
+    ter ~ normal(.1, .2);
     alpha ~ normal(1, 1) T[0, 3];
     alpha_ne ~ normal(0, 0.2);
     alpha_ne_pre_acc ~ normal(0, 0.2);
@@ -157,7 +157,7 @@ model {
     for (p in 1:n_participants) {
 
         // Participant-level non-decision time
-        participants_ter[p] ~ normal(ter, ter_sd) T[0, .3];
+        participants_ter[p] ~ normal(ter, ter_sd) T[0, .4];
 
         // Participant-level boundary parameter (speed-accuracy tradeoff)
         participants_alpha[p] ~ normal(alpha, alpha_sd) T[0, 3];
