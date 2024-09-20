@@ -75,8 +75,8 @@ model {
     // ##########
     mu_sd ~ gamma(.2,1);
     cond_sd ~ gamma(.2,1);
-    ne_sd ~ gamma(.2,1);
-    ne_acc_sd ~ gamma(.2,1);
+    ne_sd ~ normal(0,.5);
+    ne_acc_sd ~ normal(0,.5);
 
     // ##########
     // Hierarchical parameter priors
@@ -97,7 +97,7 @@ model {
     // ##########
     // Sigma prior
     // ##########
-    sigma ~ gamma(.2,1);
+    sigma ~ normal(0,.5);
 
 
     // ##########

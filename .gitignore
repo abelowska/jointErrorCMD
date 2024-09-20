@@ -1,10 +1,7 @@
 venv
-data
-plgrid_results
-cmd_results
-beh_results
-results/
-models/TBB_models/old
+**/*data*/
+**/*results*/
+**/*old*/
 .jupyter_logs.txt
 
 .DS_Store

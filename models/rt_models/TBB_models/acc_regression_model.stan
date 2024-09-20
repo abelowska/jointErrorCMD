@@ -45,22 +45,20 @@ parameters {
     vector[n_participants] participants_mu;
     vector[n_participants] participants_cond;
     vector[n_participants] participants_ne;
-    vector[n_participants] participants_acc; 
     vector[n_participants] participants_ne_acc;  
         
     real mu; // Hierarchical intercept for rt
     real cond; // Hierarchical effect of condition
     real ne; // Hierarchical effect of pre-trial eeg
-    real acc; // Hierarchical effect of pre-trial accuracy
     real ne_acc; // Hierarchical interaction effect
     
     real<lower=0> mu_sd; // Between-participants variability in intercept
     real<lower=0> cond_sd; // Between-participants variability in effect of condition
     real<lower=0> ne_sd; // Between-participants variability in effect of pre-trial eeg
-    real<lower=0> acc_sd; // Between-participants variability in effect of pre-trial accuracy
     real<lower=0> ne_acc_sd; // Between-participants variability in interaction effect
     
     // Non Hierarchical
+    real acc; 
     real ne_cond; 
     real acc_cond;
     real ne_acc_cond; 
@@ -73,8 +71,8 @@ model {
     // ##########
     mu_sd ~ gamma(1,1);
     cond_sd ~ gamma(1,1);
-    ne_sd ~ gamma(1,1);
-    ne_acc_sd ~ gamma(1,1);
+    ne_sd ~ normal(0,.5);
+    ne_acc_sd ~ normal(0,.5);
 
     // ##########
     // Hierarchical parameter priors
