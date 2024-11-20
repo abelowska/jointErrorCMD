@@ -1,9 +1,0 @@
-model: "boundary_mth"
-data: "sonata_data_standarized.json"
-fit_params:
-  n_chains: 4
-  warmup: 20
-  num_samples: 20
-  thin: 1
-  threads_per_chain: 4
-initial_path: "./python/initials.npy"

@@ -1,0 +1,107 @@
+method = sample (Default)
+sample
+num_samples = 10000
+num_warmup = 5000
+save_warmup = 0 (Default)
+thin = 5
+adapt
+engaged = 1 (Default)
+gamma = 0.05 (Default)
+delta = 0.99
+kappa = 0.75 (Default)
+t0 = 10 (Default)
+init_buffer = 75 (Default)
+term_buffer = 50 (Default)
+window = 25 (Default)
+save_metric = 0 (Default)
+algorithm = hmc (Default)
+hmc
+engine = nuts (Default)
+nuts
+max_depth = 10 (Default)
+metric = diag_e (Default)
+metric_file =  (Default)
+stepsize = 1 (Default)
+stepsize_jitter = 0 (Default)
+num_chains = 3
+id = 1 (Default)
+data
+file = ../data/current_dataset/sonata_data_standarized_rt.json
+init = 2 (Default)
+random
+seed = 42
+output
+file = /home/anna/Work/plgrid_results/pram_results/sonata/sonata_cond_rt_regression/rt_regression_model-20241120132316.csv
+diagnostic_file =  (Default)
+refresh = 100 (Default)
+sig_figs = -1 (Default)
+profile_file = profile.csv (Default)
+save_cmdstan_config = 0 (Default)
+num_threads = 36 (Default)
+
+
+Gradient evaluation took 0.002119 seconds
+1000 transitions using 10 leapfrog steps per transition would take 21.19 seconds.
+Adjust your expectations accordingly!
+
+
+
+Gradient evaluation took 0.001421 seconds
+1000 transitions using 10 leapfrog steps per transition would take 14.21 seconds.
+Adjust your expectations accordingly!
+
+
+
+Gradient evaluation took 0.001393 seconds
+1000 transitions using 10 leapfrog steps per transition would take 13.93 seconds.
+Adjust your expectations accordingly!
+
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Chain [3] Iteration:     1 / 15000 [  0%]  (Warmup)
+Chain [2] Iteration:     1 / 15000 [  0%]  (Warmup)
+Chain [1] Iteration:     1 / 15000 [  0%]  (Warmup)
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 76, column 4 to column 24)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
+Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Exception: gamma_lpdf: Random variable is inf, but must be positive finite! (in 'rt_regression_model.stan', line 77, column 4 to column 26)
+If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+
