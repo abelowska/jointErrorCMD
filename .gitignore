@@ -1,6 +1,6 @@
 venv
-**/*data*/
-**/*results*/
+data
+results
 **/*old*/
 .jupyter_logs.txt
 
