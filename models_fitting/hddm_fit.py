@@ -1,6 +1,6 @@
-'''
-HDDM models informed with EEG and pre-trial accuracy 
-'''
+"""
+HDDM models informed with EEG and pre-trial accuracy
+"""
 # Imports
 from cmdstanpy import CmdStanModel
 import os
@@ -26,16 +26,16 @@ print(config)
 ###############################################
 
 # Define model to fit
-name = config['model'] 
+name = config['model']
 model_name = f'wiener_{name}_model.stan'
 print(f'Processing model: {model_name}')
 
 # Compile the model
-stan_file = os.path.join("./models/ddm_models/TBB_models/", model_name)
+stan_file = os.path.join("../models/ddm_models/TBB_models/", model_name)
 print(stan_file)
 hddm_model = CmdStanModel(
-    stan_file=stan_file, 
-    cpp_options={'STAN_THREADS': True}, 
+    stan_file=stan_file,
+    cpp_options={'STAN_THREADS': True},
     force_compile=True
 )
 
@@ -44,7 +44,7 @@ hddm_model = CmdStanModel(
 ###############################################
 
 # Define data file
-data_file = os.path.join('./data/', config['data'])
+data_file = os.path.join('../data/', config['data'])
 
 # Read data to dataframe
 with open(data_file, 'r') as file:
@@ -53,7 +53,7 @@ with open(data_file, 'r') as file:
 data_df = pd.DataFrame(
     {
         'participant_index': data['participant'],
-         'rt': abs(np.array(data['y']))
+        'rt': abs(np.array(data['y']))
     }
 )
 
@@ -67,7 +67,7 @@ random_state = 42
 num_chains = config['fit_params']['n_chains']
 warmup = config['fit_params']['warmup']
 num_samples = config['fit_params']['num_samples']
-thin=config['fit_params']['thin']
+thin = config['fit_params']['thin']
 threads_per_chain = config['fit_params']['threads_per_chain']
 
 # Define initial values
@@ -87,49 +87,67 @@ except:
     print('Calculating initial values')
     initials = []
     for c in range(0, num_chains):
-        chain_init = {               
+        chain_init = {
             'ter_sd': np.random.uniform(.01, .2),
             'alpha_sd': np.random.uniform(.01, 1.),
-            'alpha_cond_sd': np.random.uniform(.01, 1.), # <- was 0.5
+            'alpha_cond_sd': np.random.uniform(.01, 1.),
             'delta_sd': np.random.uniform(.1, 3.),
             'delta_cond_sd': np.random.uniform(.1, 3.),
-            
-            'alpha_ne_sd': np.random.uniform(.01, .2), # <- works quite nice with .01, .2, works with .01, 1 
-            'delta_ne_sd': np.random.uniform(.01, 1), # 0.2
-    
+            'varsigma_sd': np.random.uniform(.01, .2),
+            'varsigma_cond_sd': np.random.uniform(.01, .2),  # <- was 0.5
+
+            'alpha_ne_sd': np.random.uniform(.01, .2),  # <- works quite nice with .01, .2, works with .01, 1
+            'varsigma_ne_sd': np.random.uniform(.01, .2),  # <- works quite nice with .01, .2, works with .01, 1
+            'delta_ne_sd': np.random.uniform(.001, .2),  # 0.2
+
+            'alpha_ne_pre_acc_sd': np.random.uniform(.01, .2),
+            'delta_ne_pre_acc_sd': np.random.uniform(.001, .2),
+
             'ter': np.random.uniform(0.05, .3),
-            'alpha': np.random.uniform(1, 2), #0.2 ## <- does not work with < 1
-            'alpha_cond': np.random.uniform(-.5, .5), # <- was -.1, .1 and works a little bit better
+            'alpha': np.random.uniform(1, 2),  # 0.2 ## <- does not work with < 1
+            'alpha_cond': np.random.uniform(-.5, .5),  # <- was -.1, .1 and works a little bit better
+            'varsigma': np.random.uniform(0.33, 1),  # 0.2 ## <- does not work with < 1
+            'varsigma_cond': np.random.uniform(-1, 1),  # <- was -.1, .1 and works a little bit better
             'delta': np.random.uniform(-4., 4.),
             'delta_cond': np.random.uniform(-4., 4.),
-    
-            'alpha_ne': np.random.uniform(-.05, .05), # <- does not work with -0.1, 0.1
-            'alpha_pre_acc': np.random.uniform(-0.1, .1), 
-            'alpha_ne_pre_acc': np.random.uniform(-.05, .05), # does not work with -0.1, 0.1
-            'alpha_ne_cond': np.random.uniform(-.05, .05), # <- does not work with -0.1, 0.1
-            'alpha_pre_acc_cond': np.random.uniform(-0.1, .1), 
-            'alpha_ne_pre_acc_cond': np.random.uniform(-.05, .05), # does not work with -0.1, 0.1
-    
-            'delta_ne': np.random.uniform(-.5, .5),
+
+            'alpha_ne': np.random.uniform(-.05, .05),  # <- does not work with -0.1, 0.1
+            'alpha_pre_acc': np.random.uniform(-0.1, .1),
+            'alpha_ne_pre_acc': np.random.uniform(-.05, .05),  # does not work with -0.1, 0.1
+            'alpha_ne_cond': np.random.uniform(-.05, .05),  # <- does not work with -0.1, 0.1
+            'alpha_pre_acc_cond': np.random.uniform(-0.1, .1),
+            'alpha_ne_pre_acc_cond': np.random.uniform(-.05, .05),  # does not work with -0.1, 0.1
+
+            'varsigma_ne': np.random.uniform(-.05, .05),  # <- does not work with -0.1, 0.1
+            # 'varsigma_pre_acc': np.random.uniform(-0.1, .1),
+
+            'delta_ne': np.random.uniform(-.1, .1),
             'delta_pre_acc': np.random.uniform(-.5, .5),
-            'delta_ne_pre_acc': np.random.uniform(-.5, .5),
-            'delta_ne_cond': np.random.uniform(-.5, .5),
+            'delta_ne_pre_acc': np.random.uniform(-.1, .1),
+            'delta_ne_cond': np.random.uniform(-.1, .1),
             'delta_pre_acc_cond': np.random.uniform(-.5, .5),
-            'delta_ne_pre_acc_cond': np.random.uniform(-.5, .5),
-            
+            'delta_ne_pre_acc_cond': np.random.uniform(-.1, .1),
+
             'participants_ter': np.random.uniform(0.05, .3, size=n_participants),
-            'participants_alpha': np.random.uniform(1, 2., size=n_participants), ## <- does not work with <1
-            'participants_alpha_cond': np.random.uniform(-0.5, .5, size=n_participants), # <- was -.1, .1 and works a little bit better 
+            'participants_alpha': np.random.uniform(1, 2., size=n_participants),  ## <- does not work with <1
+            'participants_alpha_cond': np.random.uniform(-0.5, .5, size=n_participants),
+            # <- was -.1, .1 and works a little bit better
+            'participants_varsigma': np.random.uniform(0.33, 1., size=n_participants),  ## <- does not work with <1
+            'participants_varsigma_cond': np.random.uniform(-0.1, .1, size=n_participants),
             'participants_delta': np.random.uniform(-4., 4., size=n_participants),
             'participants_delta_cond': np.random.uniform(-4., 4., size=n_participants),
-            
+
             'participants_alpha_ne': np.random.uniform(-.05, .05, size=n_participants),
-            'participants_delta_ne': np.random.uniform(-.5, .5, size=n_participants),
+            'participants_varsigma_ne': np.random.uniform(-.05, .05, size=n_participants),
+            'participants_delta_ne': np.random.uniform(-.1, .1, size=n_participants),
+
+            'participants_alpha_ne_pre_acc': np.random.uniform(-.05, .05, size=n_participants),
+            'participants_delta_ne_pre_acc': np.random.uniform(-.1, .1, size=n_participants),
         }
-    
+
         for p in range(0, n_participants):
-            chain_init['participants_ter'][p] = np.random.uniform(0., min_rt[p]/2)
-    
+            chain_init['participants_ter'][p] = np.random.uniform(0.0, min_rt[p] / 2)
+
         initials.append(chain_init)
 
 # Perform fitting
@@ -138,13 +156,13 @@ with open('stan_logs.txt', 'a') as f:
         start = time.time()
         fit = hddm_model.sample(
             data=data_file,
-            chains=num_chains, 
-            seed=random_state, 
-            inits=initials, 
-            iter_warmup=warmup, 
+            chains=num_chains,
+            seed=random_state,
+            inits=initials,
+            iter_warmup=warmup,
             iter_sampling=num_samples,
             parallel_chains=num_chains,
-            threads_per_chain= 4,
+            threads_per_chain=4,
             show_progress=True,
             show_console=True,
         )
@@ -153,9 +171,10 @@ with open('stan_logs.txt', 'a') as f:
 print(f'Fitting took: {end - start}')
 
 # Save MCMC fit object
-    results_path = f'./results/model_results/ddm_models/{name}/'
+results_path = f'../results/model_results/ddm_models/{name}/'
 try:
     os.makedirs(os.path.dirname(results_path), exist_ok=True)
     fit.save_csvfiles(dir=results_path)
 except Exception as e:
     print(e)
+# %%

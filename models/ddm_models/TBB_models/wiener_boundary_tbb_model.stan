@@ -26,14 +26,14 @@ functions {
         vector boundary_ne,
         real boundary_pre_acc,
         vector boundary_ne_pre_acc,
-        real boundary_ne_cond, 
+        real boundary_ne_cond,
         real boundary_pre_acc_cond,
         real boundary_ne_pre_acc_cond,
-        vector ndt, 
-        real bias, 
-        vector drift, 
-        vector drift_cond, 
-        vector condition, 
+        vector ndt,
+        real bias,
+        vector drift,
+        vector drift_cond,
+        vector condition,
         vector pre_ne,
         vector pre_acc,
         array[] int participant
@@ -41,39 +41,39 @@ functions {
         int n_trials = end - start + 1;
         int global_index = start;
         vector[n_trials] partial_sum_level_likelihood;
-        
+
         for (t in 1:n_trials) {
             if (abs(y_slice[t]) - ndt[participant[global_index]] > 0) {
-                partial_sum_level_likelihood[t] = diffusion_lpdf(y_slice[t] | boundary[participant[global_index]]  + boundary_cond[participant[global_index]]*condition[global_index] + boundary_ne[participant[global_index]]*pre_ne[global_index] + 
-                    boundary_pre_acc*pre_acc[global_index] + boundary_ne_pre_acc[participant[global_index]]*pre_ne[global_index]*pre_acc[global_index] + boundary_ne_cond*pre_ne[global_index]*condition[global_index] + boundary_pre_acc_cond*pre_acc[global_index]*condition[global_index] + 
-                    boundary_ne_pre_acc_cond*pre_ne[global_index]*pre_acc[global_index]*condition[global_index] , ndt[participant[global_index]], bias, 
+                partial_sum_level_likelihood[t] = diffusion_lpdf(y_slice[t] | boundary[participant[global_index]]  + boundary_cond[participant[global_index]]*condition[global_index] + boundary_ne[participant[global_index]]*pre_ne[global_index] +
+                    boundary_pre_acc*pre_acc[global_index] + boundary_ne_pre_acc[participant[global_index]]*pre_ne[global_index]*pre_acc[global_index] + boundary_ne_cond*pre_ne[global_index]*condition[global_index] + boundary_pre_acc_cond*pre_acc[global_index]*condition[global_index] +
+                    boundary_ne_pre_acc_cond*pre_ne[global_index]*pre_acc[global_index]*condition[global_index] , ndt[participant[global_index]], bias,
                     drift[participant[global_index]] + drift_cond[participant[global_index]]*condition[global_index]);
             } else {
-                partial_sum_level_likelihood[t] = diffusion_lpdf(ndt[participant[global_index]] | boundary[participant[global_index]]  + boundary_cond[participant[global_index]]*condition[global_index] + boundary_ne[participant[global_index]]*pre_ne[global_index] + 
-                    boundary_pre_acc*pre_acc[global_index] + boundary_ne_pre_acc[participant[global_index]]*pre_ne[global_index]*pre_acc[global_index] + boundary_ne_cond*pre_ne[global_index]*condition[global_index] + boundary_pre_acc_cond*pre_acc[global_index]*condition[global_index] + 
-                    boundary_ne_pre_acc_cond*pre_ne[global_index]*pre_acc[global_index]*condition[global_index] , ndt[participant[global_index]], bias, 
+                partial_sum_level_likelihood[t] = diffusion_lpdf(ndt[participant[global_index]] | boundary[participant[global_index]]  + boundary_cond[participant[global_index]]*condition[global_index] + boundary_ne[participant[global_index]]*pre_ne[global_index] +
+                    boundary_pre_acc*pre_acc[global_index] + boundary_ne_pre_acc[participant[global_index]]*pre_ne[global_index]*pre_acc[global_index] + boundary_ne_cond*pre_ne[global_index]*condition[global_index] + boundary_pre_acc_cond*pre_acc[global_index]*condition[global_index] +
+                    boundary_ne_pre_acc_cond*pre_ne[global_index]*pre_acc[global_index]*condition[global_index] , ndt[participant[global_index]], bias,
                     drift[participant[global_index]] + drift_cond[participant[global_index]]*condition[global_index]);
             }
             global_index = global_index + 1;
         }
         return(sum(partial_sum_level_likelihood));
     }
-    
+
     real log_likelihood_diffusion_lpdf(
-        real y, 
+        real y,
         real boundary,
         real boundary_cond,
         real boundary_ne,
         real boundary_pre_acc,
         real boundary_ne_pre_acc,
-        real boundary_ne_cond, 
+        real boundary_ne_cond,
         real boundary_pre_acc_cond,
         real boundary_ne_pre_acc_cond,
-        real ndt, 
-        real bias, 
-        real drift, 
+        real ndt,
+        real bias,
+        real drift,
         real drift_cond,
-        real condition, 
+        real condition,
         real pre_ne,
         real pre_acc
     ) {
@@ -115,20 +115,20 @@ parameters {
     real alpha_ne_pre_acc;
     real delta;
     real delta_cond;
-    
-    real<lower=0> ter_sd; 
+
+    real<lower=0> ter_sd;
     real<lower=0> alpha_sd;
     real<lower=0> alpha_cond_sd;
     real<lower=0> alpha_ne_sd;
     real<lower=0> alpha_ne_pre_acc_sd;
-    real<lower=0> delta_sd; 
+    real<lower=0> delta_sd;
     real<lower=0> delta_cond_sd;
 
     // Population-level effects
-    real alpha_pre_acc; 
+    real alpha_pre_acc;
     real alpha_ne_cond;
-    real alpha_pre_acc_cond; 
-    real alpha_ne_pre_acc_cond; 
+    real alpha_pre_acc_cond;
+    real alpha_ne_pre_acc_cond;
 }
 
 model {
@@ -158,15 +158,15 @@ model {
     // ##########
     // Population-level boundary effects
     // ##########
-    alpha_pre_acc ~ normal(0,0.2);  
+    alpha_pre_acc ~ normal(0,0.2);
     alpha_ne_cond ~ normal(0, 0.2);
-    alpha_pre_acc_cond ~ normal(0,0.2);  
+    alpha_pre_acc_cond ~ normal(0,0.2);
     alpha_ne_pre_acc_cond ~ normal(0, 0.2);
-    
+
     // ##########
     // Population-level drift effects
     // ##########
-    //  delta_pre_acc ~ normal(0, .5);  
+    //  delta_pre_acc ~ normal(0, .5);
     //  delta_ne_cond ~ normal(0, .5);
     //  delta_pre_acc_cond ~ normal(0,.5);
     // delta_ne_pre_acc_cond ~ normal(0, .5);
@@ -189,18 +189,18 @@ model {
 
         //Participant-level drift rate
         participants_delta[p] ~ normal(delta, delta_sd);
-        participants_delta_cond[p] ~ normal(delta_cond, delta_cond_sd); 
-        //  participants_delta_ne[p] ~ normal(delta_ne, delta_ne_sd);  
+        participants_delta_cond[p] ~ normal(delta_cond, delta_cond_sd);
+        //  participants_delta_ne[p] ~ normal(delta_ne, delta_ne_sd);
         // participants_delta_ne_pre_acc[p] ~ normal(delta_ne_pre_acc, delta_ne_pre_acc_sd);
-       
+
      }
-    
-    int grainsize = 100;     
-    target += reduce_sum(partial_diffusion_lpdf, y, grainsize, participants_alpha, participants_alpha_cond, participants_alpha_ne, alpha_pre_acc, participants_alpha_ne_pre_acc, alpha_ne_cond, alpha_pre_acc_cond, alpha_ne_pre_acc_cond, participants_ter, 0.5, 
-        participants_delta, participants_delta_cond, condition, pre_ne, pre_acc, participant);         
+
+    int grainsize = 100;
+    target += reduce_sum(partial_diffusion_lpdf, y, grainsize, participants_alpha, participants_alpha_cond, participants_alpha_ne, alpha_pre_acc, participants_alpha_ne_pre_acc, alpha_ne_cond, alpha_pre_acc_cond, alpha_ne_pre_acc_cond, participants_ter, 0.5,
+        participants_delta, participants_delta_cond, condition, pre_ne, pre_acc, participant);
 }
 
-generated quantities { 
+generated quantities {
     vector[N] log_lik;
     real alpha_ern;
     real alpha_crn;
@@ -227,7 +227,7 @@ generated quantities {
         // participants_delta_crn[p] = participants_delta_ne[p] + participants_delta_ne_pre_acc[p];
     }
 
-    
+
    // Wiener likelihood
     for (i in 1:N) {
         // Log density for DDM process
